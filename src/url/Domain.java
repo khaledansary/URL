@@ -86,6 +86,66 @@ public class Domain {
             }
             System.out.println("Done");
     }
+    public void preSunbrust(String inputFile,String outputFile)
+    {
+        BufferedReader br=null;
+        PrintWriter domainwriter=null,pathwriter=null;
+        String line = "";
+        
+        Map<String,Integer> map = new HashMap<>();
+        List<Sunbrust> sunbrustList = new ArrayList<Sunbrust>();
+	try {
+                
+                br = new BufferedReader(new FileReader(inputFile));
+                domainwriter = new PrintWriter(outputFile, "UTF-8");
+                
+                int sequence=1;
+                while ((line = br.readLine()) != null) {
+                                       
+                    String countstr[]=line.trim().split(",");
+                 //   System.out.println("split(,)"+Arrays.toString(countstr));
+                    
+                    String nodestr[]=countstr[0].split("_");
+                   // System.out.println("split(-)"+Arrays.toString(nodestr));
+                    int stage=1;
+                    
+                    for(int i=0;i<nodestr.length-1;i++)
+                    {
+                        Sunbrust sunbrust = new Sunbrust();
+                        sunbrust.setSequence(sequence);
+                        sunbrust.setStage(stage);
+               //         System.out.println("node: "+nodestr[i]);
+                        sunbrust.setNode(nodestr[i]);
+                        sunbrust.setValue(0);
+                        sunbrustList.add(sunbrust);
+                        stage++;
+                    }
+                    Sunbrust sunbrust = new Sunbrust();
+                    sunbrust.setSequence(sequence);
+                    sunbrust.setStage(stage);
+                    //System.out.println("node: "+nodestr[nodestr.length-1]);
+                    sunbrust.setNode(nodestr[nodestr.length-1]);
+                    sunbrust.setValue(Integer.parseInt(countstr[1]));
+                    sunbrustList.add(sunbrust);
+                    
+                    sequence++;
+                     //domainwriter.println();
+                }
+                for(int i =0;i<sunbrustList.size();i++)
+                {
+                    
+                    //System.out.println(sunbrustList.get(i).getSequence()+","+sunbrustList.get(i).getStage()+","+sunbrustList.get(i).getNode()+","+sunbrustList.get(i).getValue());
+                    domainwriter.println(sunbrustList.get(i).getSequence()+","+sunbrustList.get(i).getStage()+","+sunbrustList.get(i).getNode()+","+sunbrustList.get(i).getValue());
+                }
+        
+                domainwriter.close();
+                
+                System.out.println("Write to file-->" + outputFile ); 
+            }catch(Exception e){
+                System.out.println(e);
+            }
+            System.out.println("Done");
+    }
     public void createReverseDomain(String inputFile,String domainFile)
     {
         BufferedReader br=null;
@@ -117,7 +177,7 @@ public class Domain {
     public String reverseDomains(String str)
     {
         String revDomain="";
-        str=str.replace("-","_");
+        //str=str.replace("-","_");
         //str=str.replace(".","");
         String out[]= str.split("\\.");
         boolean www=false;
@@ -130,18 +190,18 @@ public class Domain {
             else
             {
 
-                revDomain+=out[j]+"-";
+                revDomain+=out[j]+"_";
                 
             }
         }
-        if(revDomain.endsWith("-"))
+        if(revDomain.endsWith("_"))
         {
             //revDomain = revDomain.substring(0,revDomain.length() - 1);  
         }
         if(www)
         {
             revDomain = revDomain.substring(0,revDomain.length() - 1);
-            revDomain+="-www";
+            revDomain+="_www_";
             www=false;
         }
         

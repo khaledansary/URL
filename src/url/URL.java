@@ -5,6 +5,9 @@
  */
 package url;
 
+import ExpandShortURL.ExanpandingShortURLs;
+import ExpandShortURL.MergeFilesData;
+import ExpandShortURL.SeperateShortLongURLs;
 import URLTree.FindOptimalPath;
 import URLTree.Node;
 import java.util.List;
@@ -19,48 +22,27 @@ public class URL {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
-        String inputFolder="E:\\Thesis Data\\URLProcessing\\";
-        String domainFolder="K:\\URL Analysis\\Data\\URLs_2010-2013\\All_URLs\\Domain\\";
-        String pathFolder="K:\\URL Analysis\\Data\\URLs_2010-2013\\All_URLs\\Path\\";
         
-        String allUrls="allUrls.csv";
-        String domainUrls="domainUrl.csv";
-        String pathUrls="pathUrl.csv";
+        URL obj = new URL();
         
-        /*seperate domain and path file from URL*/
-       // DomainPathFile createUrlFiles= new DomainPathFile();
-       // createUrlFiles.createDomainPathFile(inputFolder+allUrls, domainFolder+domainUrls, pathFolder+pathUrls);
-        
-        /*create domain frequencty file*/
-        /*String domainFreq="DomainFreq.csv";
-        Domain domain = new Domain();
-        domain.countDomainFreq(domainFolder+domainUrls,domainFolder+domainFreq,1);
-        
-        String domainD3File="DomainD3Freq.csv";
-        domain.createReverseDomain(domainFolder+domainFreq, domainFreq+domainD3File);*/
+        obj.defineDataSet(1,"domain",0);
         
         
-        /*create path reverse file and count frequency for D3 visualization*/
-        Path path =new Path();
-        String pathReverse="PathFreq.csv";
-        //path.createPathReverseFreq(pathFolder+pathUrls,pathFolder+pathReverse);
-        
-        
-        String pathFreq="pathD3Freq.csv";
-        
-       // path.createPathFreq(pathFolder+pathReverse, pathFolder+pathFreq);
-        
-        
-        
-        FindOptimalPath obj = new FindOptimalPath();
-        List<Node> node;
-        
-        node=obj.readFile(pathFolder+pathFreq);
-        int threshold=250;
-        pathFolder=pathFolder+"\\thresholds\\";
-        obj.printMap(node,20,pathFolder+"path_"+threshold+".csv",threshold,pathFolder+"freq_"+threshold+".csv",pathFolder+"domain_path_"+threshold+".csv");
-        
+    }
+    public void mergeFiles(String inputFile,String outputFile)
+    {
+        MergeFilesData merge = new MergeFilesData();
+        merge.mergeFiles(inputFile, outputFile);
+    }
+    public void urlSeperation(String inputFile,String longURL,String shortURL)
+    {
+        SeperateShortLongURLs sepURL= new SeperateShortLongURLs();
+        sepURL.seperateURLs(inputFile, shortURL, longURL);
+    }
+    public void urlExpand(String inputFile,String outputFile,int start,int end)
+    {
+        ExanpandingShortURLs expURL = new ExanpandingShortURLs();
+        expURL.exapandShortURLs(inputFile, outputFile, start, end);
         
     }
     public void defineDataSet(int selectData, String category,int threshold){
@@ -73,8 +55,9 @@ public class URL {
             {
                 String outputfolder=data2013+"All_URLs\\Domain\\";
                 Domain domain = new Domain();
-                domain.countDomainFreq(outputfolder+"domain_urls.csv",outputfolder+"domain_freq.csv",0);
+                domain.countDomainFreq(outputfolder+"domain_urls.csv",outputfolder+"domain_freq.csv",15);
                 domain.createReverseDomain(outputfolder+"domain_freq.csv", outputfolder+"output_domain.csv");
+                domain.preSunbrust(outputfolder+"output_domain.csv",outputfolder+"output.csv");
         
             }
             else if(category=="path")
@@ -97,7 +80,23 @@ public class URL {
         }
         else if(selectData==2)
         {
-            if(category=="domain")
+            String dataR2014=Dir+"URLs_2014\\";
+            if(category=="merge")
+            {
+                
+                String outputfolder=dataR2014+"All_URLs\\All_URLS\\";
+                mergeFiles(outputfolder,outputfolder+"allURLs_R2014.csv");
+                
+            }
+            else if(category=="urlseperation")
+            {
+                
+            }
+            else if(category=="urlexpand")
+            {
+                
+            }
+            else if(category=="domain")
             {
                 
             }
@@ -109,11 +108,25 @@ public class URL {
             {
                 
             }
+            
 
         }
         else if(selectData==3)
         {
-            if(category=="domain")
+            String dataU2014=Dir+"URLs_Users_2014\\";
+            if(category=="merge")
+            {
+                
+            }
+            else if(category=="urlseperation")
+            {
+                
+            }
+            else if(category=="urlexpand")
+            {
+                
+            }
+            else if(category=="domain")
             {
                 
             }
@@ -127,14 +140,6 @@ public class URL {
             }
 
         }
-        
-    }
-    public void domainURL()
-    {
-        
-    }
-    public void pathURL()
-    {
         
     }
     
