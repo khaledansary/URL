@@ -80,17 +80,17 @@ public class SeperateShortLongURLs {
                String str[]=urlline.split("\t");
                URL aURL = new URL(str[0]);
                String host=aURL.getHost();
-               System.out.println("host = " + aURL.getHost()); 
+               //System.out.println("host = " + aURL.getHost()); 
               // System.out.println("url"+urlline); 
                totalu++;
                int flag=0;
                for(String domain : domains){
-                    if(host.equals(domain) || host.contains(domain)){
+                    if(host.equals(domain)){
                         shortu++;
                         writer.println(str[0]+"\t"+str[1]+"\t"+str[1]);
                         
                          
-                        System.out.println("find shorturl"+str[0]);
+                       // System.out.println("find shorturl"+str[0]);
                         flag=1;
                         break;
                         

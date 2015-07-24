@@ -43,115 +43,109 @@ public class ExanpandingShortURLs {
      }
      return expandedURL;
     }
-    public  void exapandShortURLs(String infile,String outfile,int start,int end) {
+    public  void exapandShortURLs(String infile,String outfile,String mappedFile) {
 
+        
         BufferedReader br=null;
-        PrintWriter writer=null;
+        PrintWriter writer=null,writerMapped=null;
 	String line = "";
 	try {
             br = new BufferedReader(new FileReader(infile));
             writer = new PrintWriter(outfile, "UTF-8");
-                int i=0;
-                int count=start;
+            writerMapped = new PrintWriter(mappedFile, "UTF-8");
+            int i=0;
+            int count=0;
+
+            int row=0;
+            int flashflag=0;
+            while ((line = br.readLine()) != null) {
+                count++;
                 
-		int row=0;
-                int flashflag=0;
-		while ((line = br.readLine()) != null) {
-                    count++;
-                    System.out.println("shortURL: "+line);
-                    if(row>=end)
+                /*if(count>50)
+                {
+                    break;
+                }*/
+                
+
+                flashflag++;
+                System.out.println("start Row: "+row);
+                row++;
+                try
+                {
+                    String str[]=line.split("\t");
+                    String expandedURL="";
+                    int loop=1;
+                    String temp="";
+                    String url=str[0];
+                    //System.out.println("shortURL: "+url);
+                    while(true)
                     {
-                        break;
-                    }
-                    if(row==0)
-                    {
-                       row++;
-                    }
-                    else if(row<start)
-                    {
-                       row++; 
-                    }
-                    else if(row>=start && row<end)
-                    {
-                        flashflag++;
-                        System.out.println("start Row: "+row);
-                        row++;
-                        try
+
+                        String validurl=expandUrl(url.trim());
+
+                        if(validurl!=null && !validurl.isEmpty() && validurl.matches("^(https?|ftp)://.*$"))
                         {
-                            URL fileToDownload = new URL(line);
-                            String expandedURL="";
-                            String url=fileToDownload.toString();
-                            String urls[]=url.split(" ");
-                            for(int k=0;k<urls.length;k++)
-                            {
-                                url=urls[k];
-                                int loop=1;
-                                String temp="";
-                                while(true)
-                                {
-
-                                    String validurl=expandUrl(url.trim());
-                                    System.out.println("valid Url: " + validurl); 
-
-                                    if(validurl!=null && !validurl.isEmpty() && validurl.matches("^(https?|ftp)://.*$"))
-                                    {
-                                        loop++;
-
-                                        if(loop>3){
-                                            loop=1;
-                                            break;
-                                        }
-                                        if(temp.equals(validurl))
-                                        {
-
-
-                                            break;
-                                        }
-                                        else{
-                                            expandedURL = validurl;
-                                            url=expandedURL;
-                                            temp=url;
-                                            System.out.println("flag: 1"); 
-                                        }
-                                        //System.out.println("---" + expandedURL); 
-
-                                    }
-                                    else if(validurl==null || validurl.trim().equals("list") || validurl.isEmpty()){
-                                        //System.out.println("flag: 2"); 
-
-                                        expandedURL=url.trim();
-                                        break;
-
-                                    }
-                                    else
-                                    {
-                                        break;
-                                    }
-
-                                }
-                            }
-                        
-                            System.out.println(line + "<----------- write ----------->" + expandedURL); 
+                            loop++;
                             
-                            if(!expandedURL.isEmpty())
-                            {
-                                writer.println(row+" "+expandedURL);
+                            
 
-
+                            if(loop>4){
+                                loop=1;
+                                break;
                             }
-                        }catch(Exception e)
-                        {
-                            System.out.println("err: "+e);
+                            if(temp.equals(validurl))
+                            {
+
+
+                                break;
+                            }
+                            else{
+                                expandedURL = validurl;
+                                url=expandedURL;
+                                temp=url;
+                  //              System.out.println("flag: 1"); 
+                            }
+                            //System.out.println("---" + expandedURL); 
+
                         }
+                        else if(validurl==null || validurl.trim().equals("list") || validurl.isEmpty()){
+                            //System.out.println("flag: 2"); 
+
+                            expandedURL=url.trim();
+                            break;
+
+                        }
+                        else
+                        {
+                            break;
+                        }
+
                     }
-		}
-                try {
-                            writer.flush();
-                            writer.close();
-                    } catch (Exception e) {
-                            e.printStackTrace();
+                    
+
+                    //System.out.println(line + "<----------- write ----------->" + expandedURL); 
+
+                    if(!expandedURL.isEmpty())
+                    {
+                        writer.println(line+"\t"+expandedURL+"\t"+str[1]+"\t"+str[2]);
+                        writerMapped.println(str[0]+"\t"+expandedURL);
+
                     }
-                System.out.println("Write to file-->" + outfile); 
+                }catch(Exception e)
+                {
+                    System.out.println("err: "+e);
+                }
+
+            }
+            try {
+                        writer.flush();
+                        writer.close();
+                        writerMapped.flush();
+                        writerMapped.close();
+                } catch (Exception e) {
+                        e.printStackTrace();
+                }
+            System.out.println("Write to file-->" + outfile); 
 	} catch (FileNotFoundException e) {
 		e.printStackTrace();
 	} catch (IOException e) {
@@ -172,6 +166,16 @@ public class ExanpandingShortURLs {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+                }
+                if(writerMapped!=null)
+                {
+                    try {
+                            writerMapped.flush();
+                            writerMapped.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+                    
                 }
 	}
  
