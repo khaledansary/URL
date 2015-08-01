@@ -5,21 +5,27 @@
  */
 package url;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.validator.routines.UrlValidator;
 
 /**
  *
@@ -27,6 +33,7 @@ import java.util.logging.Logger;
  */
 public class Domain {
     
+    Map<String, String> nodeColorMap = new HashMap<String, String>();
     public void countDomainFreq(String inputFile,String domainFile,int threshold)
     {
         BufferedReader br=null;
@@ -86,6 +93,10 @@ public class Domain {
             }
             System.out.println("Done");
     }
+    public void testSunbrust(String line)
+    {
+        
+    }
     public void preSunbrust(String inputFile,String outputFile)
     {
         BufferedReader br=null;
@@ -105,7 +116,7 @@ public class Domain {
                     String countstr[]=line.trim().split(",");
                  //   System.out.println("split(,)"+Arrays.toString(countstr));
                     
-                    String nodestr[]=countstr[0].split("_");
+                    String nodestr[]=countstr[0].split("#");
                    // System.out.println("split(-)"+Arrays.toString(nodestr));
                     int stage=1;
                     
@@ -167,6 +178,18 @@ public class Domain {
                 }
                 
                 domainwriter.close();
+                
+                PrintWriter writerNode = new PrintWriter("K:\\URL Analysis\\Visualization\\URLs_2010-2013\\All_URLs\\Domain\\Domain_Sunbust_2013\\nodelist.txt", "UTF-8");
+                PrintWriter writerColor = new PrintWriter("K:\\URL Analysis\\Visualization\\URLs_2010-2013\\All_URLs\\Domain\\Domain_Sunbust_2013\\colorlist.txt", "UTF-8");
+                for (Map.Entry<String, String> entry : nodeColorMap.entrySet()) {
+                    //"home"
+                    //System.out.print("\""+entry.getKey()+ "\",");
+                    writerNode.print("\""+entry.getKey()+ "\",");
+                    writerColor.print("\""+ entry.getValue()+ "\",");
+                    //System.out.print("\""+ entry.getValue()+ "\",");
+                }
+                
+                
                 //writer.close();
                 System.out.println("Write to file-->" + domainFile ); 
             }catch(Exception e){
@@ -174,37 +197,85 @@ public class Domain {
             }
             System.out.println("Done");
     }
+    public String getColor()
+    {
+        
+        Random random = new Random();
+        final float hue = random.nextFloat()+0.5f;
+        final float saturation =0.9f;//1.0 for brilliant, 0.0 for dull
+        final float luminance = 1.0f; //1.0 for brighter, 0.0 for black*/
+        Color color = Color.getHSBColor(hue, saturation, luminance);
+        
+        Formatter f = new Formatter(new StringBuffer("#"));
+        f.format("%06x", color.getRGB());
+        f.toString();
+        return f.toString();
+    }
     public String reverseDomains(String str)
     {
-        String revDomain="";
-        //str=str.replace("-","_");
-        //str=str.replace(".","");
-        String out[]= str.split("\\.");
-        boolean www=false;
-        for(int j=out.length-1;j>=0;j--)
-        {
-            if(out[j].trim().equals("WWW")||out[j].trim().equals("www"))
+       String revDomain="";
+        try {
+            
+            UrlValidator defaultValidator = new UrlValidator();     
+            //System.out.println("URL: "+str);
+            if(defaultValidator.isValid("http://"+str))
             {
-                www=true;
+            
+                URL host_path = new URL("http://"+str);
+
+                String host=host_path.getHost().toLowerCase();
+                host=host.replace(",", "");
+                
+    
+                String out[]= host.split("\\.");
+                boolean www=false;
+
+              //  System.out.println("Host: "+host);
+               // System.out.println("Path: "+path);
+                for(int j=out.length-1;j>=0;j--)
+                {
+                    if(out[j].trim().equals("WWW")||out[j].trim().equals("www"))
+                    {
+                        www=true;
+                    }
+                    else
+                    {
+
+                        revDomain+=out[j]+"#";
+                        
+                        if(!nodeColorMap.containsKey(out[j])){
+                          nodeColorMap.put(out[j], getColor());  
+                        } 
+                        
+
+                    }
+                    
+                }
+                if(revDomain.endsWith("#"))
+                {
+                    revDomain = revDomain.substring(0,revDomain.length() - 1);
+                }
+                //System.out.println("Host reverse: "+revDomain);
+                if(www)
+                {
+                    revDomain+="#"+"www";
+                    www=false;
+                }
+                revDomain+="#"+"end";
+                
+                
+                
+                //System.out.println("URL: "+str);
+                //System.out.println("reverse URL: "+revDomain);
             }
             else
             {
-
-                revDomain+=out[j]+"_";
-                
+                System.out.println("Not valid: "+str);
             }
+     
+        } catch (MalformedURLException ex) {
+            //Logger.getLogger(URLprocess_path.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if(revDomain.endsWith("_"))
-        {
-            //revDomain = revDomain.substring(0,revDomain.length() - 1);  
-        }
-        if(www)
-        {
-            revDomain = revDomain.substring(0,revDomain.length() - 1);
-            revDomain+="_www_";
-            www=false;
-        }
-        
         return revDomain;
     }
     

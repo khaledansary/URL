@@ -42,19 +42,19 @@ import url.Path;
  */
 public class FindOptimalPath {
     
-    /*public static void main(String[] args)  {
+    public static void main(String[] args)  {
  
-        String DirLoc="E:\\Thesis Data\\URLsForThesis\\URLv\\Path\\";
+       /* String DirLoc="E:\\Thesis Data\\URLsForThesis\\URLv\\Path\\";
         FindOptimalPath obj = new FindOptimalPath();
         List<Node> node;
         node=obj.readFile(DirLoc+"domainFrequenciesPath_final.csv");
 	int threshold=50;
-        obj.printMap(node,20,DirLoc+"path_"+threshold+".csv",threshold,DirLoc+"freq_"+threshold+".csv",DirLoc+"domain_path_"+threshold+".csv");
+        obj.printMap(node,20,DirLoc+"path_"+threshold+".csv",threshold,DirLoc+"freq_"+threshold+".csv",DirLoc+"domain_path_"+threshold+".csv");*/
        /* node=obj.readFile(DirLoc+"domainFrequencies.csv");
 	int threshold=5;
-        obj.printMap(node,20,DirLoc+"domain_"+threshold+".csv",threshold,DirLoc+"visit-sequences"+threshold+".csv",DirLoc+"domain_d3_"+threshold+".csv");
+        obj.printMap(node,20,DirLoc+"domain_"+threshold+".csv",threshold,DirLoc+"visit-sequences"+threshold+".csv",DirLoc+"domain_d3_"+threshold+".csv");*/
          
-     }*/
+     }
     
     public  List<Node> readFile(String inputFile)
     {

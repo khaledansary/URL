@@ -20,6 +20,17 @@ import java.net.URL;
  */
 public class ExanpandingShortURLs {
     
+     public static void main(String[] args) {
+        
+     
+        ExanpandingShortURLs obj= new ExanpandingShortURLs();
+        
+        String inputFolder="K:\\URL Analysis\\Data\\URLs_2014\\All_URLs\\All_URLS\\All_UnShortedURLs\\shortURLs";
+        String outputFolder="K:\\URL Analysis\\Data\\URLs_2014\\All_URLs\\All_URLS\\All_UnShortedURLs\\re_unshortURLs";
+        obj.exapandShortURLs(inputFolder, outputFolder,"");
+     
+    }
+    
     public String expandUrl(String shortenedUrl)  {
      String expandedURL="";
      try{
@@ -52,7 +63,7 @@ public class ExanpandingShortURLs {
 	try {
             br = new BufferedReader(new FileReader(infile));
             writer = new PrintWriter(outfile, "UTF-8");
-            writerMapped = new PrintWriter(mappedFile, "UTF-8");
+           // writerMapped = new PrintWriter(mappedFile, "UTF-8");
             int i=0;
             int count=0;
 
@@ -68,7 +79,12 @@ public class ExanpandingShortURLs {
                 
 
                 flashflag++;
-                System.out.println("start Row: "+row);
+                
+                if(count>1000)
+                {
+                    System.out.println("start Row: "+row);
+                    count=0;
+                }
                 row++;
                 try
                 {
@@ -127,8 +143,10 @@ public class ExanpandingShortURLs {
 
                     if(!expandedURL.isEmpty())
                     {
-                        writer.println(line+"\t"+expandedURL+"\t"+str[1]+"\t"+str[2]);
-                        writerMapped.println(str[0]+"\t"+expandedURL);
+                        writer.println(str[0]+"\t"+expandedURL);
+                        //writer.println(str[0]+"\t"+expandedURL+"\t"+str[1]+"\t"+str[2]);
+                        //writer.println(str[0]+"\t"+expandedURL+"\t"+str[1]+"\t"+str[2]);
+                       // writerMapped.println(str[0]+"\t"+expandedURL);
 
                     }
                 }catch(Exception e)
@@ -140,8 +158,8 @@ public class ExanpandingShortURLs {
             try {
                         writer.flush();
                         writer.close();
-                        writerMapped.flush();
-                        writerMapped.close();
+                       // writerMapped.flush();
+                        //writerMapped.close();
                 } catch (Exception e) {
                         e.printStackTrace();
                 }
@@ -170,8 +188,8 @@ public class ExanpandingShortURLs {
                 if(writerMapped!=null)
                 {
                     try {
-                            writerMapped.flush();
-                            writerMapped.close();
+                          //  writerMapped.flush();
+                           // writerMapped.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
